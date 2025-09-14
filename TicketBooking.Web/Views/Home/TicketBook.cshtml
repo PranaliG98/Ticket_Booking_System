@@ -1,0 +1,141 @@
+﻿@model TicketBooking.Web.ViewModels.BookingViewModel
+
+
+<div class="row mt-2">
+    <div class="col-md-5">
+        <div class="row">
+            <img src="@Model.BusImage" height="170" width="250"/>
+        </div>
+        <div>
+            <h2>Bus Number: @Model.BusNumber</h2>
+        </div>
+   
+    </div>
+
+
+
+    <div class="col-md-4">
+        <form asp-action="TicketBook">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+               
+                <input type="hidden" asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div id="seatDetailsContainer">
+            @for (int i = 0; i < Model.SeatDetail.Count; i++)
+            {
+                <input type="hidden" asp-for="@Model.SeatDetail[i].Id"/>
+                @if(Model.SeatDetail[i].IsChecked==true)
+                {
+                    <input  asp-for="@Model.SeatDetail[i].IsChecked" disabled />
+                    @Model.SeatDetail[i].SeatNumber
+                    <img src="~/SeatImage/@Model.SeatDetail[i].SeatImage" height="64" width="64"/>
+                }
+                @if (Model.SeatDetail[i].IsChecked == false)
+                {
+                    <input asp-for="@Model.SeatDetail[i].IsChecked" />
+
+                    @Model.SeatDetail[i].SeatNumber
+                    <img src="~/SeatImage/@Model.SeatDetail[i].SeatImage" height="64" width="64" />
+                }
+
+            }
+            </div>
+          
+            <div class="form-group mt-2">
+                <label asp-for="JourneyDate" class="control-label"></label>
+                <input asp-for="JourneyDate" class="form-control" id="journeyDateInput" />
+                <span asp-validation-for="JourneyDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Book Now" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $("#journeyDateInput").on("change", function () {
+                var selectedDate = $(this).val();
+                var busId = $("#Id").val();
+
+                $.ajax({
+                    url: '/Home/GetSeatDetailsByDate',
+                    type: 'GET',
+                    data: { busId: busId, journeyDate: selectedDate },
+                    success: function (seatDetails) {
+                        updateSeatDetails(seatDetails);
+                    },
+                    error: function (error) {
+                        console.log("There was an error fetching updated seat details:", error);
+                    }
+                });
+            });
+        });
+
+
+
+
+
+        function updateSeatDetails(seatDetails) {
+            var seatContainer = $("#seatDetailsContainer");
+            var seatHtml = "";
+
+            $.each(seatDetails, function (index, seatDetail) {
+                seatHtml += '<input type="hidden" name="SeatDetail[' + index + '].Id" value="' + seatDetail.id + '" />';
+
+                // Add a hidden field for the unchecked value of the checkbox
+               
+
+                if (seatDetail.isChecked) {
+                    seatHtml += '<input disabled type="checkbox" name="SeatDetail[' + index + '].IsChecked" />' + seatDetail.seatNumber;
+                } else {
+                   
+                    seatHtml += '<input type="checkbox" name="SeatDetail[' + index + '].IsChecked" value="true"  />' + seatDetail.seatNumber;
+                }
+
+                seatHtml += '<img src="/SeatImage/' + seatDetail.seatImage + '" height="64" width="64" />';
+            });
+
+            seatContainer.html(seatHtml);
+        }
+        $(document).on("change", "input[type='checkbox'][name^='SeatDetail']", function () {
+            if ($(this).is(':checked')) {
+                $(this).val('true');
+            } else {
+                $(this).val('false');
+            }
+        });
+
+
+
+
+        //function updateSeatDetails(seatDetails) {
+        //    var seatContainer = $("#seatDetailsContainer");
+        //    var seatHtml="";
+        //    $.each(seatDetails,function(index,seatDetail)
+        //    {
+        //        seatHtml += '<input type="hidden" name="SeatDetail[' + index + '].Id" value="' + seatDetail.id +'"/>';
+
+        //     if (seatDetail.isChecked == true)
+        //       {
+        //            seatHtml += '<input type="checkbox" name="SeatDetail[' + index + '].IsChecked"  checked disabled />'
+        //            +seatDetail.seatNumber;
+        //            }
+        //            else
+
+        //            {
+        //            seatHtml += '<input type="checkbox" name="SeatDetail[' + index + '].IsChecked"  /> '
+        //                + seatDetail.seatNumber;
+        //            }
+        //        seatHtml +='<img src="/SeatImage/'+seatDetail.seatImage +'" height="64" width="64" />';
+        //        });
+        //    seatContainer.html(seatHtml);
+
+        //}
+    </script>
+}
