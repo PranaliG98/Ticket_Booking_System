@@ -1,0 +1,22 @@
+﻿@model IEnumerable<BusViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row mt-2">
+    @foreach (var bus in Model)
+    {
+        <div class="col-3">
+            <div class="card" style="width: 18rem;">
+                <img src="@bus.BusImage" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Bus Number : @bus.BusNumber</h5>
+                    <p class="card-title">Total Seats :  @bus.MaxSeatCapacity</p>
+                    <a asp-action="TicketBook" asp-route-id="@bus.Id" class="btn btn-primary">Book Tickets</a>
+                </div>
+            </div>
+        </div>
+
+    }
+   
+</div>

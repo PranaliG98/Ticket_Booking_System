@@ -1,0 +1,56 @@
+﻿@model IEnumerable<TicketBooking.Web.ViewModels.SeatVM.SeatDetailViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Seat Details</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-info">Create New</a>
+</p>
+<table width="100%" id="seatTable"  class="table table-striped table-bordered dt-head-nowrap">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Seat Number
+            </th>
+            <th>
+               Bus Number
+            </th>
+           
+            <th>
+               Seat Status
+            </th>
+           
+        </tr>
+    </thead>
+@*    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SeatNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BusNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SeatStatus)
+            </td>
+            <td>
+                    <partial name="_listlinks" model="@item.Id" />
+            </td>
+        </tr>
+}
+    </tbody>*@
+</table>
+@section scripts
+{
+    <script src="/js/seatDetails.js"></script>
+}
